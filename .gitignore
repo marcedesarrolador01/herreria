@@ -1,0 +1,24 @@
+# Entornos virtuales
+env/
+venv/
+.entorno/
+entorno/
+__pycache__/
+*.pyc
+
+# Configuración local
+.env
+*.sqlite3
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de compilación
+*.log
+
+# Archivos específicos de VSCode
+.vscode/
+
+# Archivos de bases de datos
+db.sqlite3

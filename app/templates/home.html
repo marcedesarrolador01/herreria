@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio | Herrería Moderna{% endblock %}
+
+{% block content %}
+<section class="hero text-white d-flex flex-column align-items-center justify-content-center">
+  <h1>Diseño y Fuerza en Cada Detalle</h1>
+  <p>Rejas, portones y estructuras metálicas con excelencia artesanal</p>
+  <a href="{% url 'services' %}" class="btn btn-custom mt-4 px-4 py-2">Ver Servicios</a>
+</section>
+
+<!-- Presentación -->
+<section class="container py-5">
+  <div class="row text-center">
+    <div class="col-md-4">
+      <i class="fas fa-drafting-compass fa-3x text-warning mb-3"></i>
+      <h4>Diseño Personalizado</h4>
+      <p>Cada proyecto es único, adaptado a tu espacio y estilo.</p>
+    </div>
+    <div class="col-md-4">
+      <i class="fas fa-cogs fa-3x text-warning mb-3"></i>
+      <h4>Calidad Garantizada</h4>
+      <p>Materiales resistentes y técnicas profesionales.</p>
+    </div>
+    <div class="col-md-4">
+      <i class="fas fa-clock fa-3x text-warning mb-3"></i>
+      <h4>Entregas Puntuales</h4>
+      <p>Respetamos tu tiempo con procesos ágiles y eficientes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Galería -->
+<section class="section-trabajos">
+  <div class="container">
+    <h2 class="text-center mb-5 text-warning">Trabajos realizados</h2>
+    <div class="row g-4">
+      {% for trabajo in trabajos %}
+      <div class="col-12 col-sm-6 col-md-3 d-flex">
+        <div class="card-trabajo estilo-a w-100 shadow-sm">
+          <img src="{{ trabajo.imagen.url }}" alt="{{ trabajo.titulo }}" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modalTrabajo{{ forloop.counter }}">
+          <div class="card-trabajo-body">
+            <h3 class="card-trabajo-title">{{ trabajo.titulo }}</h3>
+            <p class="card-trabajo-desc" id="desc-home{{ forloop.counter }}">
+              {{ trabajo.descripcion|truncatechars:100 }}
+            </p>
+            <span class="ver-mas" onclick="toggleDesc('desc-home{{ forloop.counter }}', this)">Ver más</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal con carrusel -->
+      <div class="modal fade" id="modalTrabajo{{ forloop.counter }}" tabindex="-1" aria-labelledby="modalLabel{{ forloop.counter }}" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-0">
+              <h5 class="modal-title" id="modalLabel{{ forloop.counter }}">{{ trabajo.titulo }}</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body p-0">
+              <div id="carouselTrabajo{{ forloop.counter }}" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                  <div class="carousel-item active">
+                    <img src="{{ trabajo.imagen.url }}" class="d-block w-100" alt="Imagen principal">
+                  </div>
+                  {% for img in trabajo.imagenes.all %}
+                  <div class="carousel-item">
+                    <img src="{{ img.imagen.url }}" class="d-block w-100" alt="Imagen adicional">
+                  </div>
+                  {% endfor %}
+                </div>
+                {% if trabajo.imagenes.all.count > 0 %}
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselTrabajo{{ forloop.counter }}" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselTrabajo{{ forloop.counter }}" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Siguiente</span>
+                </button>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="text-center mt-4">
+      <a href="{% url 'trabajos_lista' %}" class="btn btn-custom mt-4 px-4 py-2">Ver todos los trabajos</a>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonios -->
+<section class="container py-5">
+  <h2 class="text-center text-warning mb-4">Testimonios</h2>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="testimonial">
+        <p><i class="fas fa-quote-left text-warning"></i> Excelente calidad y atención personalizada. ¡Mi portón quedó espectacular!</p>
+        <p class="text-end">– Juan Pérez</p>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="testimonial">
+        <p><i class="fas fa-quote-left text-warning"></i> Cumplieron en tiempo y forma. ¡100% recomendables!</p>
+        <p class="text-end">– María Gómez</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<script>
+function toggleDesc(id, link) {
+  const desc = document.getElementById(id);
+  desc.classList.toggle("expanded");
+  link.textContent = desc.classList.contains("expanded") ? "Ver menos" : "Ver más";
+}
+</script>
+{% endblock %}

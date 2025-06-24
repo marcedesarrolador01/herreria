@@ -1,0 +1,359 @@
+ {% extends "base.html" %}
+
+{% block title %}Productos | Herrería Moderna{% endblock %}
+
+{% block content %}
+<section class="section-productos">
+  <div class="container">
+    <h2 class="text-center text-light mb-5">Productos Disponibles</h2>
+    <div class="row g-4">
+      {% for product in page_obj %}
+      <div class="col-md-4 d-flex">
+        <div class="card-trabajo w-100">
+          <img src="{{ product.imagen.url }}" alt="{{ product.title }}" onclick="mostrarModal(this.src)" style="cursor: pointer;">
+          <div class="card-trabajo-body">
+            <h3 class="card-trabajo-title">{{ product.title }}</h3>
+            <p class="card-trabajo-desc" id="desc-prod{{ forloop.counter }}">
+              {{ product.description|truncatechars:100 }}
+            </p>
+            <span class="ver-mas" onclick="toggleDesc('desc-prod{{ forloop.counter }}', this)">Ver más</span>
+            <p class="card-trabajo-price">${{ product.price }} ARS</p>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-light">No hay productos cargados aún.</p>
+      {% endfor %}
+    </div>
+
+    <!-- Paginación -->
+    <div class="mt-4 text-center">
+      <nav>
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+          </li>
+          {% endif %}
+
+          <li class="page-item disabled">
+            <span class="btn btn-custom mt-4 px-4 py-2">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+          </li>
+
+          {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </div>
+</section>
+
+<!-- Modal para imagen -->
+<div id="modal-img" class="modal-img" onclick="cerrarModal()">
+  <span class="cerrar">&times;</span>
+  <img class="modal-contenido" id="img-ampliada">
+</div>
+
+<style>
+body {
+  background-color: #111;
+  color: #f8f8f8;
+}
+.section-productos h2 {
+  color: gold;
+}
+.card-trabajo {
+  background-color: #1c1c1c;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+.card-trabajo:hover {
+  transform: translateY(-5px);
+}
+.card-trabajo img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+.card-trabajo-body {
+  padding: 15px;
+}
+.card-trabajo-title {
+  color: white; /* ✅ corregido: blanco */
+  font-size: 1.2rem;
+}
+.card-trabajo-desc {
+  color: #ccc;
+}
+.card-trabajo-price {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #28a745; /* ✅ corregido: verde */
+}
+.ver-mas {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.85rem;
+  color: #ffc107; /* amarillo */
+  cursor: pointer;
+}
+
+/* Modal fullscreen */
+.modal-img {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  padding-top: 60px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.9);
+}
+.modal-contenido {
+  margin: auto;
+  display: block;
+  max-width: 90%;
+  max-height: 90%;
+}
+.cerrar {
+  position: absolute;
+  top: 20px;
+  right: 35px;
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+}
+</style>
+
+
+<script>
+function mostrarModal(src) {
+  var modal = document.getElementById("modal-img");
+  var imgAmpliada = document.getElementById("img-ampliada");
+  modal.style.display = "block";
+  imgAmpliada.src = src;
+}
+function cerrarModal() {
+  document.getElementById("modal-img").style.display = "none";
+}
+function toggleDesc(id, link) {
+  const desc = document.getElementById(id);
+  desc.classList.toggle("expanded");
+  link.textContent = desc.classList.contains("expanded") ? "Ver menos" : "Ver más";
+}
+</script>
+{% endblock %}
+
+
+esto es mas estilo-a
+
+
+
+{% extends "base.html" %}
+
+{% block title %}Productos | Herrería Moderna{% endblock %}
+
+{% block content %}
+<section class="section-productos">
+  <div class="container">
+    <h2 class="text-center text-light mb-5">Productos Disponibles</h2>
+
+    <!-- Botón desplegable filtro -->
+    <div class="mb-4 text-end">
+      <div class="dropdown d-inline-block">
+        <button class="btn btn-custom mt-4 px-4 py-2 dropdown-toggle" type="button" id="dropdownFiltro" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: gold; color: black; font-weight: bold;">
+          {% if filtro == "menor" %}Menor precio{% elif filtro == "mayor" %}Mayor precio{% elif filtro == "descuento" %}Con descuento{% else %}Ordenar por...{% endif %}
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownFiltro">
+          <li><a class="dropdown-item" href="?filtro=menor">Menor precio</a></li>
+          <li><a class="dropdown-item" href="?filtro=mayor">Mayor precio</a></li>
+          <li><a class="dropdown-item" href="?filtro=descuento">Con descuento</a></li>
+          <li><a class="dropdown-item" href="?">Quitar filtro</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+      {% for product in page_obj %}
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2 d-flex">
+        <div class="card-trabajo estilo-a w-100">
+          {% if product.descuento > 0 %}
+          <div class="descuento-badge">-{{ product.descuento }}% DESCUENTO</div>
+          {% endif %}
+          <img src="{{ product.imagen.url }}" alt="{{ product.title }}" onclick="mostrarModal(this.src)" style="cursor: pointer;">
+          <div class="card-trabajo-body">
+            <h3 class="card-trabajo-title">{{ product.title }}</h3>
+            <p class="card-trabajo-desc" id="desc-prod{{ forloop.counter }}">
+              {{ product.description|truncatechars:100 }}
+            </p>
+            <span class="ver-mas" onclick="toggleDesc('desc-prod{{ forloop.counter }}', this)">Ver más</span>
+            <p class="card-trabajo-price">
+              {% if product.descuento > 0 %}
+                <span class="precio-original">${{ product.price }}</span>
+                <span class="precio-descuento">${{ product.precio_con_descuento|floatformat:2 }}</span>
+              {% else %}
+                ${{ product.price }} ARS
+              {% endif %}
+            </p>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-light">No hay productos cargados aún.</p>
+      {% endfor %}
+    </div>
+
+    <!-- Paginación -->
+    <div class="mt-4 text-center">
+      <nav>
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if filtro %}&filtro={{ filtro }}{% endif %}">Anterior</a>
+          </li>
+          {% endif %}
+          <li class="page-item disabled">
+            <span class="btn btn-custom mt-4 px-4 py-2">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+          </li>
+          {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if filtro %}&filtro={{ filtro }}{% endif %}">Siguiente</a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </div>
+</section>
+
+<!-- Modal para imagen -->
+<div id="modal-img" class="modal-img" onclick="cerrarModal()">
+  <span class="cerrar">&times;</span>
+  <img class="modal-contenido" id="img-ampliada">
+</div>
+
+<style>
+body {
+  background-color: #111;
+  color: #f8f8f8;
+}
+.section-productos h2 {
+  color: gold;
+}
+.card-trabajo.estilo-a {
+  background-color: #000;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+  overflow: hidden;
+  transition: transform 0.2s;
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.card-trabajo.estilo-a:hover {
+  transform: translateY(-6px);
+}
+.card-trabajo.estilo-a img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
+.card-trabajo-body {
+  padding: 10px;
+  flex-grow: 1;
+}
+.card-trabajo-title {
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+.card-trabajo-desc {
+  color: #ccc;
+  font-size: 0.85rem;
+}
+.card-trabajo-price {
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+.precio-original {
+  color: #bbb;
+  text-decoration: line-through;
+  margin-right: 6px;
+}
+.precio-descuento {
+  color: #28a745;
+  font-weight: bold;
+}
+.ver-mas {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: #ffc107;
+  cursor: pointer;
+}
+.descuento-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: #ff9800;
+  color: black;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 3px 6px;
+  border-radius: 4px;
+}
+.modal-img {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  padding-top: 60px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.9);
+}
+.modal-contenido {
+  margin: auto;
+  display: block;
+  max-width: 90%;
+  max-height: 90%;
+}
+.cerrar {
+  position: absolute;
+  top: 20px;
+  right: 35px;
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+}
+</style>
+
+<script>
+function mostrarModal(src) {
+  var modal = document.getElementById("modal-img");
+  var imgAmpliada = document.getElementById("img-ampliada");
+  modal.style.display = "block";
+  imgAmpliada.src = src;
+}
+function cerrarModal() {
+  document.getElementById("modal-img").style.display = "none";
+}
+function toggleDesc(id, link) {
+  const desc = document.getElementById(id);
+  desc.classList.toggle("expanded");
+  link.textContent = desc.classList.contains("expanded") ? "Ver menos" : "Ver más";
+}
+</script>
+{% endblock %}

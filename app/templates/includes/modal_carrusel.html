@@ -1,0 +1,38 @@
+{# includes/modal_carrusel.html #}
+<div class="modal fade" id="modal{{ identificador }}" tabindex="-1" aria-labelledby="modalLabel{{ identificador }}" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="modalLabel{{ identificador }}">{{ objeto.titulo }}</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div id="carousel{{ identificador }}" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img src="{{ objeto.imagen.url }}" class="d-block w-100" alt="Imagen principal">
+            </div>
+            {% for img in objeto.imagenes.all %}
+              <div class="carousel-item">
+                <img src="{{ img.imagen.url }}" class="d-block w-100" alt="Imagen adicional">
+              </div>
+            {% endfor %}
+          </div>
+
+          {% if objeto.imagenes.all.count > 0 %}
+            <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ identificador }}" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ identificador }}" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Siguiente</span>
+            </button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

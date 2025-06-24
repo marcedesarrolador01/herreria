@@ -1,0 +1,10 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <h1>📊 Estadísticas del Sitio</h1>
+  <ul style="font-size: 1.2rem; margin-top: 20px;">
+    <li>👁️ Visitas hoy: <strong>{{ visitas_hoy }}</strong></li>
+    <li>📅 Últimos 7 días: <strong>{{ visitas_semana }}</strong></li>
+    <li>🗓️ Últimos 30 días: <strong>{{ visitas_mes }}</strong></li>
+  </ul>
+{% endblock %}
