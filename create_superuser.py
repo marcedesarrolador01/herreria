@@ -1,3 +1,4 @@
+"""""
 import os
 import django
 
@@ -12,4 +13,4 @@ if not User.objects.filter(username="admin").exists():
     User.objects.create_superuser("alejandroperez", "admin@example.com", "herreria2025perez270625")
     print("✅ Superusuario creado")
 else:
-    print("⚠️ El superusuario ya existe")
+    print("⚠️ El superusuario ya existe")"""
