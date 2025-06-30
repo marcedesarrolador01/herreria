@@ -197,23 +197,20 @@ body {
 }
 
 .card-trabajo-desc {
-  color: #ccc;
-  font-size: 0.95rem;
-  max-height: 4.5em;
+  max-height: 4.5em; /* muestra aprox 3 líneas */
   overflow: hidden;
+  position: relative;
   transition: max-height 0.3s ease;
 }
 
 .card-trabajo-desc.expanded {
-  max-height: 1000px;
+  max-height: 1000px; /* altura grande para mostrar todo */
 }
-
 .ver-mas {
-  display: block;
-  margin-top: 5px;
-  font-size: 0.85rem;
-  color: #ffc107;
+  display: inline-block;
+  color: #007bff;
   cursor: pointer;
+  margin-top: 5px;
 }
 
 .card-trabajo-price {

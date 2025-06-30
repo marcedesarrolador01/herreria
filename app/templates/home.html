@@ -42,7 +42,7 @@
           <div class="card-trabajo-body">
             <h3 class="card-trabajo-title">{{ trabajo.titulo }}</h3>
             <p class="card-trabajo-desc" id="desc-home{{ forloop.counter }}">
-              {{ trabajo.descripcion|truncatechars:100 }}
+              {{ trabajo.descripcion }}
             </p>
             <span class="ver-mas" onclick="toggleDesc('desc-home{{ forloop.counter }}', this)">Ver más</span>
           </div>
