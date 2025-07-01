@@ -1,28 +1,95 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends "base.html" %}
+
+{% block title %}Trabajos | Herrería Moderna{% endblock %}
+
 {% block content %}
-<link rel="stylesheet" href="{% static 'style.css' %}">
-<div class="container">
-  <h1 class="titulo-principal">Trabajos Realizados</h1>
-  <div class="card-container">
-    {% for trabajo in trabajos %}
-    <div class="card-trabajo">
-      <img class="card-trabajo-img" src="{{ trabajo.imagen.url }}" alt="{{ trabajo.nombre }}">
-      <h2 class="card-trabajo-title">{{ trabajo.titulo }}</h2>
-      <p class="card-trabajo-desc" id="desc-trabajo{{ forloop.counter }}">
-        {{ trabajo.descripcion }}
-      </p>
-      <span class="ver-mas" onclick="toggleDesc('desc-trabajo{{ forloop.counter }}', this)">Ver más</span>
+<section class="section-productos py-4">
+  <div class="container">
+    <h2 class="text-center text-light mb-5">Trabajos Realizados</h2>
+
+    <div class="row g-4">
+      {% for trabajo in page_obj %}
+      <div class="col-12 col-sm-6 col-md-3 d-flex">
+        <div class="card-trabajo estilo-a w-100 shadow-sm">
+          <img src="{{ trabajo.imagen.url }}" alt="{{ trabajo.titulo }}" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modalTrabajo{{ forloop.counter }}">
+          <div class="card-trabajo-body">
+            <h3 class="card-trabajo-title">{{ trabajo.titulo }}</h3>
+            <p class="card-trabajo-desc" id="desc-trabajo{{ forloop.counter }}">
+              {{ trabajo.descripcion }}
+            </p>
+            <span class="ver-mas" onclick="toggleDesc('desc-trabajo{{ forloop.counter }}', this)">Ver más</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal con carrusel -->
+      <div class="modal fade" id="modalTrabajo{{ forloop.counter }}" tabindex="-1" aria-labelledby="modalLabel{{ forloop.counter }}" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-0">
+              <h5 class="modal-title" id="modalLabel{{ forloop.counter }}">{{ trabajo.titulo }}</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body p-0">
+              <div id="carouselTrabajo{{ forloop.counter }}" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                  <div class="carousel-item active">
+                    <img src="{{ trabajo.imagen.url }}" class="d-block w-100" alt="Imagen principal">
+                  </div>
+                  {% for img in trabajo.imagenes.all %}
+                  <div class="carousel-item">
+                    <img src="{{ img.imagen.url }}" class="d-block w-100" alt="Imagen adicional">
+                  </div>
+                  {% endfor %}
+                </div>
+                {% if trabajo.imagenes.all.count > 0 %}
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselTrabajo{{ forloop.counter }}" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselTrabajo{{ forloop.counter }}" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Siguiente</span>
+                </button>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
+
+    <!-- Paginación -->
+    <div class="mt-4 text-center">
+      <nav>
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+          </li>
+          {% endif %}
+          <li class="page-item disabled">
+            <span class="btn btn-custom mt-4 px-4 py-2">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+          </li>
+          {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
   </div>
-</div>
+</section>
+
+
+
 <script>
-  function toggleDesc(id, el) {
-    const p = document.getElementById(id);
-    if (!p) return;
-    const expanded = p.classList.toggle('expanded');
-    el.innerText = expanded ? 'Ver menos' : 'Ver más';
-  }
+function toggleDesc(id, link) {
+  const desc = document.getElementById(id);
+  desc.classList.toggle("expanded");
+  link.textContent = desc.classList.contains("expanded") ? "Ver menos" : "Ver más";
+}
 </script>
 {% endblock %}
