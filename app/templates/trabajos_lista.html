@@ -8,7 +8,7 @@
     {% for trabajo in trabajos %}
     <div class="card-trabajo">
       <img class="card-trabajo-img" src="{{ trabajo.imagen.url }}" alt="{{ trabajo.nombre }}">
-      <h2 class="card-trabajo-title">{{ trabajo.nombre }}</h2>
+      <h2 class="card-trabajo-title">{{ trabajo.titulo }}</h2>
       <p class="card-trabajo-desc" id="desc-trabajo{{ forloop.counter }}">
         {{ trabajo.descripcion }}
       </p>

@@ -1,28 +1,121 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends "base.html" %}
+
+{% block title %}Productos | Herrería Moderna{% endblock %}
+
 {% block content %}
-<link rel="stylesheet" href="{% static 'style.css' %}">
-<div class="container">
-  <h1 class="titulo-principal">Productos</h1>
-  <div class="card-container">
-    {% for product in productos %}
-    <div class="card-trabajo">
-      <img class="card-trabajo-img" src="{{ product.image.url }}" alt="{{ product.name }}">
-      <h2 class="card-trabajo-title">{{ product.name }}</h2>
-      <p class="card-trabajo-desc" id="desc-prod{{ forloop.counter }}">
-        {{ product.description }}
-      </p>
-      <span class="ver-mas" onclick="toggleDesc('desc-prod{{ forloop.counter }}', this)">Ver más</span>
+<section class="section-productos py-4">
+  <div class="container">
+    <h2 class="text-center text-light mb-5">Productos Disponibles</h2>
+
+    <!-- Botón desplegable filtro -->
+    <div class="mb-4 text-end">
+      <div class="dropdown d-inline-block">
+        <button class="btn btn-custom mt-4 px-4 py-2 dropdown-toggle" type="button" id="dropdownFiltro" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: gold; color: black; font-weight: bold;">
+          {% if filtro == "menor" %}Menor precio{% elif filtro == "mayor" %}Mayor precio{% elif filtro == "descuento" %}Con descuento{% else %}Ordenar por...{% endif %}
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownFiltro">
+          <li><a class="dropdown-item" href="?filtro=menor">Menor precio</a></li>
+          <li><a class="dropdown-item" href="?filtro=mayor">Mayor precio</a></li>
+          <li><a class="dropdown-item" href="?filtro=descuento">Con descuento</a></li>
+          <li><a class="dropdown-item" href="?">Quitar filtro</a></li>
+        </ul>
+      </div>
     </div>
-    {% endfor %}
+
+    <div class="row g-4">
+      {% for product in page_obj %}
+      <div class="col-12 col-sm-6 col-md-3 d-flex">
+        <div class="card-trabajo estilo-a w-100 shadow-sm">
+          {% if product.descuento > 0 %}
+          <div class="descuento-badge">-{{ product.descuento }}% DESCUENTO</div>
+          {% endif %}
+          <img src="{{ product.imagen.url }}" alt="{{ product.title }}" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#modalProducto{{ forloop.counter }}">
+          <div class="card-trabajo-body">
+            <h3 class="card-trabajo-title">{{ product.title }}</h3>
+            <p class="card-trabajo-desc" id="desc-prod{{ forloop.counter }}">
+              {{ product.description }}
+            </p>
+            <span class="ver-mas" onclick="toggleDesc('desc-prod{{ forloop.counter }}', this)">Ver más</span>
+            <p class="card-trabajo-price mt-3">
+              {% if product.descuento > 0 %}
+                <span class="precio-original">${{ product.price }}</span>
+                <span class="precio-descuento">${{ product.precio_con_descuento|floatformat:2 }}</span>
+              {% else %}
+                ${{ product.price }} ARS
+              {% endif %}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL CARRUSEL DE IMÁGENES -->
+      <div class="modal fade" id="modalProducto{{ forloop.counter }}" tabindex="-1" aria-labelledby="modalLabel{{ forloop.counter }}" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-0">
+              <h5 class="modal-title" id="modalLabel{{ forloop.counter }}">{{ product.title }}</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body p-0">
+              <div id="carouselProducto{{ forloop.counter }}" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                  <div class="carousel-item active">
+                    <img src="{{ product.imagen.url }}" class="d-block w-100" alt="Imagen principal">
+                  </div>
+                  {% for img in product.imagenes.all %}
+                  <div class="carousel-item">
+                    <img src="{{ img.imagen.url }}" class="d-block w-100" alt="Imagen adicional">
+                  </div>
+                  {% endfor %}
+                </div>
+                {% if product.imagenes.all.count > 0 %}
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselProducto{{ forloop.counter }}" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselProducto{{ forloop.counter }}" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Siguiente</span>
+                </button>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Paginación -->
+    <div class="mt-4 text-center">
+      <nav>
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if filtro %}&filtro={{ filtro }}{% endif %}">Anterior</a>
+          </li>
+          {% endif %}
+          <li class="page-item disabled">
+            <span class="btn btn-custom mt-4 px-4 py-2">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+          </li>
+          {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if filtro %}&filtro={{ filtro }}{% endif %}">Siguiente</a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
   </div>
-</div>
+</section>
+
+
+
 <script>
-  function toggleDesc(id, el) {
-    const p = document.getElementById(id);
-    if (!p) return;
-    const expanded = p.classList.toggle('expanded');
-    el.innerText = expanded ? 'Ver menos' : 'Ver más';
-  }
+function toggleDesc(id, link) {
+  const desc = document.getElementById(id);
+  desc.classList.toggle("expanded");
+  link.textContent = desc.classList.contains("expanded") ? "Ver menos" : "Ver más";
+}
 </script>
 {% endblock %}
